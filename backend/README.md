@@ -1,4 +1,4 @@
-# Project backend
+# Project backend-chi
 
 One Paragraph of project description goes here
 
