@@ -12,8 +12,9 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(cors.Handler(cors.Options{
+	v1 := chi.NewRouter()
+	v1.Use(middleware.Logger)
+	v1.Use(cors.Handler(cors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
 		AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
@@ -24,11 +25,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
 
-	r.Get("/", s.HelloWorldHandler)
+	v1.Get("/", s.HelloWorldHandler)
 
-	r.Get("/health", s.healthHandler)
+	v1.Get("/health", s.healthHandler)
 
-	r.Post("/login", s.LoginHandler)
+	v1.Post("/login", s.LoginHandler)
+
+	v1.Post("/logout", s.LogoutHandler)
+
+	r.Mount("/v1/api", v1)
 
 	return r
 }
